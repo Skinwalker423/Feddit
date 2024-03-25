@@ -29,6 +29,7 @@ export const {
       // not needed but fixing a temp issue in nextauth
       if (session && user) {
         session.user.id = user.id;
+        session.emailVerified = user.emailVerified;
       }
       return session;
     },
