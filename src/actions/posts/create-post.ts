@@ -1,12 +1,15 @@
 "use server";
 
 import db from "@/db";
+import { paths } from "@/helpers/paths";
+import { revalidatePath } from "next/cache";
 
 interface NewPost {
   title: string;
   content: string;
   userId: string;
   topicId: string;
+  topic: string;
 }
 
 export const createPost = async (newPost: NewPost) => {
@@ -18,4 +21,8 @@ export const createPost = async (newPost: NewPost) => {
       topicId: newPost.topicId,
     },
   });
+
+  // revalidate topics show
+  const path = paths.topicShow(newPost.topic);
+  revalidatePath(path);
 };

@@ -1,6 +1,8 @@
 "use server";
 
 import db from "@/db";
+import { paths } from "@/helpers/paths";
+import { revalidatePath } from "next/cache";
 
 interface CreateTopicProps {
   slug: string;
@@ -17,4 +19,7 @@ export const createTopic = async ({
       description,
     },
   });
+  // revalidate home page
+  const path = paths.home();
+  revalidatePath(path);
 };
