@@ -2,12 +2,16 @@
 
 import db from "@/db";
 import { paths } from "@/helpers/paths";
-import { error } from "console";
 import { revalidatePath } from "next/cache";
 import z from "zod";
+import { auth } from "@/auth";
 
 interface CreateTopicFormState {
-  error: { name?: string[]; description?: string[] };
+  error: {
+    name?: string[];
+    description?: string[];
+    general?: string | string[];
+  };
 }
 
 const createTopicSchema = z.object({
@@ -25,46 +29,58 @@ export const createTopic = async (
   formState: CreateTopicFormState,
   formData: FormData
 ): Promise<CreateTopicFormState> => {
-  const slug = formData.get("name")?.toString();
-  const description = formData
-    .get("description")
-    ?.toString();
+  try {
+    const session = await auth();
+    if (!session?.user)
+      return {
+        error: {
+          general: "Must be logged in to create topic",
+        },
+      };
+    const slug = formData.get("name")?.toString();
+    const description = formData
+      .get("description")
+      ?.toString();
 
-  const test = createTopicSchema.safeParse({
-    name: slug,
-    description: description,
-  });
-  if (!test.success) {
-    const error = test.error.flatten().fieldErrors;
-    console.log("error", error);
+    if (!slug || !description)
+      return {
+        error: {},
+      };
 
+    const test = createTopicSchema.safeParse({
+      name: slug,
+      description: description,
+    });
+
+    if (!test.success) {
+      const error = test.error.flatten().fieldErrors;
+      console.log("error", error);
+
+      return {
+        error: {
+          name: error.name || [],
+          description: error.description || [],
+        },
+      };
+    } else {
+      const topic = await db.topic.create({
+        data: {
+          slug,
+          description,
+        },
+      });
+      // revalidate home page
+      const path = paths.home();
+      revalidatePath(path);
+      return {
+        error: {},
+      };
+    }
+  } catch (error: any) {
     return {
       error: {
-        name: error.name || [],
-        description: error.description || [],
+        general: error?.message,
       },
     };
-  } else {
-    return {
-      error: {},
-    };
   }
-
-  // if (!slug) {
-  //   return;
-  // }
-
-  // if (!description) {
-  //   return;
-  // }
-
-  // const topic = await db.topic.create({
-  //   data: {
-  //     slug,
-  //     description,
-  //   },
-  // });
-  // // revalidate home page
-  // const path = paths.home();
-  // revalidatePath(path);
 };

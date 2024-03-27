@@ -38,7 +38,7 @@ const TopicCreatForm = () => {
               placeholder='Topic Name'
               name='name'
               isInvalid={!!state.error.name}
-              errorMessage={state.error.name || ""}
+              errorMessage={state.error.name}
             />
             <Textarea
               name='description'
@@ -46,8 +46,13 @@ const TopicCreatForm = () => {
               labelPlacement='outside'
               placeholder='Describe your topic'
               isInvalid={!!state.error.description}
-              errorMessage={state.error.description || ""}
+              errorMessage={state.error.description}
             />
+            {state.error?.general && (
+              <p className='text-red-300 text-lg'>
+                {state.error.general}
+              </p>
+            )}
             <Button type='submit'>Submit</Button>
           </form>
         </PopoverContent>
