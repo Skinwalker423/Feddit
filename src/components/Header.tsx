@@ -9,6 +9,7 @@ import {
 
 import { paths } from "@/helpers/paths";
 import HeaderAuth from "./HeaderAuth";
+import { Suspense } from "react";
 
 const Header = () => {
   return (
@@ -25,7 +26,9 @@ const Header = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem>
-          <HeaderAuth />
+          <Suspense>
+            <HeaderAuth />
+          </Suspense>
         </NavbarItem>
       </NavbarContent>
     </Navbar>

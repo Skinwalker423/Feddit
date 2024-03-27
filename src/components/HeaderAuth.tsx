@@ -13,6 +13,7 @@ import {
   signOutGithub,
 } from "@/actions/auth";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const HeaderAuth = () => {
   const session = useSession();
@@ -20,6 +21,12 @@ const HeaderAuth = () => {
   const userSession = session?.data?.user;
 
   let authContent: React.ReactNode;
+
+  useEffect(() => {
+    if (isLoading) {
+      authContent = null;
+    }
+  }, [isLoading]);
 
   if (isLoading) {
     authContent = null;
