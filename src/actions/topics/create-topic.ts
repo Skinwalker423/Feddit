@@ -10,7 +10,7 @@ interface CreateTopicFormState {
   error: {
     name?: string[];
     description?: string[];
-    general?: string | string[];
+    general?: string[];
   };
 }
 
@@ -31,10 +31,10 @@ export const createTopic = async (
 ): Promise<CreateTopicFormState> => {
   try {
     const session = await auth();
-    if (!session?.user)
+    if (!session || !session?.user)
       return {
         error: {
-          general: "Must be logged in to create topic",
+          general: ["Must be logged in to create topic"],
         },
       };
     const slug = formData.get("name")?.toString();
