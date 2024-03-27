@@ -1,3 +1,5 @@
+"use client";
+
 import { createTopic } from "@/actions/topics";
 import {
   Popover,
@@ -8,8 +10,18 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import React from "react";
+import { useFormState } from "react-dom";
 
 const TopicCreatForm = () => {
+  const [state, formAction] = useFormState(createTopic, {
+    error: {
+      name: [],
+      description: [],
+    },
+  });
+
+  console.log("state", state);
+
   return (
     <aside>
       <Popover placement='left-start'>
@@ -18,7 +30,7 @@ const TopicCreatForm = () => {
         </PopoverTrigger>
         <PopoverContent>
           <form
-            action={createTopic}
+            action={formAction}
             className='p-5 flex flex-col gap-3 w-80'
           >
             <h3 className='text-lg'>Create Topic</h3>
