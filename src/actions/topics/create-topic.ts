@@ -5,6 +5,8 @@ import { paths } from "@/helpers/paths";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { auth } from "@/auth";
+import type { Topic } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 interface CreateTopicFormState {
   error: {
@@ -29,6 +31,7 @@ export const createTopic = async (
   formState: CreateTopicFormState,
   formData: FormData
 ): Promise<CreateTopicFormState> => {
+  let topic: Topic;
   try {
     const session = await auth();
     if (!session || !session?.user)
@@ -63,24 +66,30 @@ export const createTopic = async (
         },
       };
     } else {
-      const topic = await db.topic.create({
+      const response = await db.topic.create({
         data: {
-          slug,
-          description,
+          slug: test.data.name,
+          description: test.data.description,
         },
       });
-      // revalidate home page
-      const path = paths.home();
-      revalidatePath(path);
+      topic = response;
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
       return {
-        error: {},
+        error: {
+          general: [error?.message],
+        },
+      };
+    } else {
+      return {
+        error: {
+          general: ["something unexpected went wrong"],
+        },
       };
     }
-  } catch (error: any) {
-    return {
-      error: {
-        general: error?.message,
-      },
-    };
   }
+  const path = paths.home();
+  revalidatePath(path);
+  redirect(paths.topicShow(topic.slug));
 };
