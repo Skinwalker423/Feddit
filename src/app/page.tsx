@@ -1,7 +1,18 @@
+import TopicCreatForm from "@/components/topics/TopicCreatForm";
+
 export default async function Home() {
   return (
-    <main className='w-full min-h-screen flex flex-col'>
-      <div>Home page</div>
-    </main>
+    <div className='grid grid-cols-4 gap-4 p-4 mt-5'>
+      <div className='col-span-3 bg-red-300'>
+        <h1>Posts</h1>
+        <ul>
+          <li>Post 1</li>
+          <li>Post 2</li>
+        </ul>
+      </div>
+      <div>
+        <TopicCreatForm />
+      </div>
+    </div>
   );
 }
