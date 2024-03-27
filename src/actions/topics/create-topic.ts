@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import z from "zod";
 
 interface CreateTopicFormState {
-  error: { name?: string[]; description: string[] };
+  error: { name?: string[]; description?: string[] };
 }
 
 const createTopicSchema = z.object({
@@ -46,10 +46,7 @@ export const createTopic = async (
     };
   } else {
     return {
-      error: {
-        name: [],
-        description: [],
-      },
+      error: {},
     };
   }
 

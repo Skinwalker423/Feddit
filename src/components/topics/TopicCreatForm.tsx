@@ -14,10 +14,7 @@ import { useFormState } from "react-dom";
 
 const TopicCreatForm = () => {
   const [state, formAction] = useFormState(createTopic, {
-    error: {
-      name: [],
-      description: [],
-    },
+    error: {},
   });
 
   console.log("state", state);
@@ -40,12 +37,16 @@ const TopicCreatForm = () => {
               labelPlacement='outside'
               placeholder='Topic Name'
               name='name'
+              isInvalid={!!state.error.name}
+              errorMessage={state.error.name || ""}
             />
             <Textarea
               name='description'
               label='Description'
               labelPlacement='outside'
               placeholder='Describe your topic'
+              isInvalid={!!state.error.description}
+              errorMessage={state.error.description || ""}
             />
             <Button type='submit'>Submit</Button>
           </form>
