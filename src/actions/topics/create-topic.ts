@@ -4,15 +4,20 @@ import db from "@/db";
 import { paths } from "@/helpers/paths";
 import { revalidatePath } from "next/cache";
 
-interface CreateTopicProps {
-  slug: string;
-  description: string;
-}
+export const createTopic = async (formData: FormData) => {
+  const slug = formData.get("name")?.toString();
+  const description = formData
+    .get("description")
+    ?.toString();
 
-export const createTopic = async ({
-  slug,
-  description,
-}: CreateTopicProps) => {
+  if (!slug) {
+    return;
+  }
+
+  if (!description) {
+    return;
+  }
+
   const topic = await db.topic.create({
     data: {
       slug,

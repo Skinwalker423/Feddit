@@ -1,3 +1,4 @@
+import { createTopic } from "@/actions/topics";
 import {
   Popover,
   PopoverTrigger,
@@ -17,7 +18,7 @@ const TopicCreatForm = () => {
         </PopoverTrigger>
         <PopoverContent>
           <form
-            action=''
+            action={createTopic}
             className='p-5 flex flex-col gap-3 w-80'
           >
             <h3 className='text-lg'>Create Topic</h3>
@@ -26,8 +27,10 @@ const TopicCreatForm = () => {
               label='Name'
               labelPlacement='outside'
               placeholder='Topic Name'
+              name='name'
             />
             <Textarea
+              name='description'
               label='Description'
               labelPlacement='outside'
               placeholder='Describe your topic'
