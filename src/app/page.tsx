@@ -1,4 +1,5 @@
-import TopicCreatForm from "@/components/topics/TopicCreatForm";
+import TopicCreateForm from "@/components/topics/TopicCreatForm";
+import TopicsList from "@/components/topics/TopicsList";
 
 export default async function Home() {
   return (
@@ -11,7 +12,8 @@ export default async function Home() {
         </ul>
       </div>
       <div>
-        <TopicCreatForm />
+        <TopicCreateForm />
+        <TopicsList />
       </div>
     </div>
   );

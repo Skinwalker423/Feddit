@@ -13,7 +13,7 @@ import React from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import FormButton from "../common/FormButton";
 
-const TopicCreatForm = () => {
+const TopicCreateForm = () => {
   const [state, formAction] = useFormState(createTopic, {
     error: {},
   });
@@ -24,7 +24,7 @@ const TopicCreatForm = () => {
     <aside>
       <Popover placement='left-start'>
         <PopoverTrigger>
-          <Button>New Topic</Button>
+          <Button color='primary'>New Topic</Button>
         </PopoverTrigger>
         <PopoverContent>
           <form
@@ -62,4 +62,4 @@ const TopicCreatForm = () => {
   );
 };
 
-export default TopicCreatForm;
+export default TopicCreateForm;
