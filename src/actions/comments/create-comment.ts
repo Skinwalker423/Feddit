@@ -1,32 +1,90 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { auth } from "@/auth";
 import db from "@/db";
 import { paths } from "@/helpers/paths";
-import { revalidatePath } from "next/cache";
 
-interface NewCommentProps {
-  content: string;
-  postId: string;
-  userId: string;
-  parentId?: string;
-  topic: string;
+const createCommentSchema = z.object({
+  content: z.string().min(3),
+});
+
+interface CreateCommentFormState {
+  errors: {
+    content?: string[];
+    general?: string[];
+  };
+  success?: boolean;
 }
 
-export const createComment = async (
-  newComment: NewCommentProps
-) => {
-  const topic = await db.comment.create({
-    data: {
-      content: newComment.content,
-      postId: newComment.postId,
-      userId: newComment.userId,
-    },
+export async function createComment(
+  {
+    postId,
+    parentId,
+  }: { postId: string; parentId?: string },
+  formState: CreateCommentFormState,
+  formData: FormData
+): Promise<CreateCommentFormState> {
+  const result = createCommentSchema.safeParse({
+    content: formData.get("content"),
   });
 
-  // revalidate post show page
-  const path = paths.postShow(
-    newComment.topic,
-    newComment.postId
-  );
-  revalidatePath(path);
-};
+  if (!result.success) {
+    return {
+      errors: result.error.flatten().fieldErrors,
+    };
+  }
+
+  const session = await auth();
+  if (!session || !session.user) {
+    return {
+      errors: {
+        general: ["You must sign in to do this."],
+      },
+    };
+  }
+
+  try {
+    await db.comment.create({
+      data: {
+        content: result.data.content,
+        postId: postId,
+        parentId: parentId,
+        userId: session.user.id,
+      },
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      return {
+        errors: {
+          general: [err.message],
+        },
+      };
+    } else {
+      return {
+        errors: {
+          general: ["Something went wrong..."],
+        },
+      };
+    }
+  }
+
+  const topic = await db.topic.findFirst({
+    where: { posts: { some: { id: postId } } },
+  });
+
+  if (!topic) {
+    return {
+      errors: {
+        general: ["Failed to revalidate topic"],
+      },
+    };
+  }
+
+  revalidatePath(paths.postShow(topic.slug, postId));
+  return {
+    errors: {},
+    success: true,
+  };
+}
