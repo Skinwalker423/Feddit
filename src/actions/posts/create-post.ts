@@ -28,11 +28,12 @@ const createPostSchema = z.object({
 });
 
 export const createPost = async (
+  slug: string,
   formState: CreateTopicFormState,
   formData: FormData
 ): Promise<CreateTopicFormState> => {
   let post: Post;
-  let topic: Topic;
+
   try {
     const session = await auth();
     if (!session || !session?.user)
@@ -43,9 +44,8 @@ export const createPost = async (
       };
     const title = formData.get("title")?.toString();
     const content = formData.get("content")?.toString();
-    const topicSlug = formData.get("topic")?.toString();
 
-    if (!title || !content || !topicSlug)
+    if (!title || !content || !slug)
       return {
         error: {},
       };
@@ -67,21 +67,21 @@ export const createPost = async (
       };
     } else {
       const topicResponse = await db.topic.findUnique({
-        where: { slug: topicSlug },
+        where: { slug: slug },
       });
       if (!topicResponse)
         return {
           error: {
-            general: ["problem getting topic slug"],
+            general: ["problem getting topic id"],
           },
         };
-      topic = topicResponse;
+
       const response = await db.post.create({
         data: {
           title: test.data.title,
           content: test.data.content,
           userId: session.user.id,
-          topicId: topicResponse.slug,
+          topicId: topicResponse.id,
         },
       });
       post = response;
@@ -103,7 +103,9 @@ export const createPost = async (
   }
 
   // revalidate topics show
-  const path = paths.topicShow(topic.slug);
+  const path = paths.topicShow(slug);
+  const rpath = paths.postShow(slug, post.id, true);
+  console.log("redirect", rpath);
   revalidatePath(path);
-  redirect(paths.postShow(post.topicId, post.id));
+  redirect(rpath);
 };

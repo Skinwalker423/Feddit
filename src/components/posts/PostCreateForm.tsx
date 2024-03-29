@@ -14,9 +14,12 @@ import { useFormState, useFormStatus } from "react-dom";
 import FormButton from "../common/FormButton";
 
 const PostCreateForm = ({ slug }: { slug: string }) => {
-  const [state, formAction] = useFormState(createPost, {
-    error: {},
-  });
+  const [state, formAction] = useFormState(
+    createPost.bind(null, slug),
+    {
+      error: {},
+    }
+  );
 
   console.log("params", slug);
 
@@ -40,12 +43,6 @@ const PostCreateForm = ({ slug }: { slug: string }) => {
               name='title'
               isInvalid={!!state?.error?.title}
               errorMessage={state?.error?.title}
-            />
-            <Input
-              hidden
-              type='text'
-              name='topic'
-              value={slug}
             />
             <Textarea
               name='content'
