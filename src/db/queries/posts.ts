@@ -25,3 +25,19 @@ export function fetchPostByTopicSlug(
     },
   });
 }
+export async function fetchPostById(
+  postId: string
+): Promise<PostWithData | null> {
+  const response = await db.post.findFirst({
+    where: {
+      id: postId,
+    },
+    include: {
+      topic: { select: { slug: true } },
+      user: { select: { name: true } },
+      _count: { select: { comments: true } },
+    },
+  });
+
+  return response;
+}
