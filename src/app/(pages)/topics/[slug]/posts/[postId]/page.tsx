@@ -4,8 +4,6 @@ import CommentList from "@/components/comments/comment-list";
 import CommentCreateForm from "@/components/comments/comment-create-form";
 import { paths } from "@/helpers/paths";
 import db from "@/db";
-import { PostWithData } from "@/db/queries/posts";
-import { notFound } from "next/navigation";
 
 interface PostShowPageProps {
   params: {
@@ -18,17 +16,11 @@ export default async function PostShowPage({
   params,
 }: PostShowPageProps) {
   const { slug, postId } = params;
-
-  const post = await db.post.findFirst({
-    where: { id: postId },
+  const comments = await db.comment.findMany({
     include: {
-      topic: { select: { slug: true } },
-      user: { select: { name: true } },
-      _count: { select: { comments: true } },
+      user: { select: { name: true, image: true } },
     },
   });
-
-  if (!post) return notFound();
 
   return (
     <div className='space-y-3'>
@@ -38,9 +30,9 @@ export default async function PostShowPage({
       >
         {"< "}Back to {slug}
       </Link>
-      {<PostShow post={post} />}
-      {/* <CommentCreateForm postId={postId} startOpen /> */}
-      {/* <CommentList comments={comments} /> */}
+      {<PostShow postId={postId} />}
+      <CommentCreateForm postId={postId} startOpen />
+      <CommentList comments={comments} />
     </div>
   );
 }
