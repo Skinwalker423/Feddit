@@ -104,7 +104,7 @@ export const createPost = async (
 
   // revalidate topics show
   const path = paths.topicShow(slug);
-  const rpath = paths.postShow(slug, post.id, true);
+  const rpath = paths.postShow(slug, post.id);
   console.log("redirect", rpath);
   revalidatePath(path);
   redirect(rpath);

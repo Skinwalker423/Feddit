@@ -1,4 +1,5 @@
 import PostCreateForm from "@/components/posts/PostCreateForm";
+import PostList from "@/components/posts/post-list";
 import React from "react";
 
 interface TopicPageProps {
@@ -10,7 +11,7 @@ const TopicPage = ({ params }: TopicPageProps) => {
     <div className='grid grid-cols-4 gap-4 p-4'>
       <div className='col-span-3'>
         <h1 className='text-2xl font-bold mb-2'>
-          {params.slug}
+          <PostList slug={params.slug} />
         </h1>
       </div>
       <div className='border shadow py-3 px-2'>

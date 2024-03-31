@@ -3,21 +3,13 @@ export const paths = {
     return "/";
   },
   topicShow: (topicSlug: string) => {
-    return `topics/${topicSlug}`;
+    return `/topics/${topicSlug}`;
   },
 
   postCreate: (topicSlug: string) => {
-    return `topics/${topicSlug}/posts/new`;
+    return `/topics/${topicSlug}/posts/new`;
   },
-  postShow: (
-    topicSlug: string,
-    postId: string,
-    server?: boolean
-  ) => {
-    if (server) {
-      return `${topicSlug}/posts/${postId}`;
-    } else {
-      return `topics/${topicSlug}/posts/${postId}`;
-    }
+  postShow: (topicSlug: string, postId: string) => {
+    return `/topics/${topicSlug}/posts/${postId}`;
   },
 };
