@@ -1,7 +1,7 @@
-import type { Post } from "@prisma/client";
+import type { PostWithData } from "@/db/queries/posts";
 
 interface PostShowProps {
-  post: Post;
+  post: PostWithData;
 }
 
 export default function PostShow({ post }: PostShowProps) {
