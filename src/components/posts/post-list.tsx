@@ -1,16 +1,18 @@
 import db from "@/db";
-import { fetchPostByTopicSlug } from "@/db/queries/posts";
+import type { PostWithData } from "@/db/queries/posts";
 import { paths } from "@/helpers/paths";
 import type { Post, User, Topic } from "@prisma/client";
 import Link from "next/link";
 
+interface PostListProps {
+  fetchData: () => Promise<PostWithData[]>;
+}
+
 // TODO: Get list of posts into this component somehow
 export default async function PostList({
-  slug,
-}: {
-  slug: string;
-}) {
-  const posts = await fetchPostByTopicSlug(slug);
+  fetchData,
+}: PostListProps) {
+  const posts = await fetchData();
   const renderedPosts = posts.map((post) => {
     const topicSlug = post.topic.slug;
 
@@ -20,9 +22,7 @@ export default async function PostList({
 
     return (
       <div key={post.id} className='border rounded p-2'>
-        <Link
-          href={paths.postShow(topicSlug, post.id, true)}
-        >
+        <Link href={paths.postShow(topicSlug, post.id)}>
           <h3 className='text-lg font-bold'>
             {post.title}
           </h3>
