@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { Button } from "@nextui-org/react";
 import CommentCreateForm from "@/components/comments/comment-create-form";
 import type { Comment } from "@prisma/client";
+import { fetchCommentsByPostId } from "@/db/queries/comments";
 
 export type CommentWithUser = Comment & {
   user: {
@@ -12,14 +12,15 @@ export type CommentWithUser = Comment & {
 
 interface CommentShowProps {
   commentId: string;
-  comments: CommentWithUser[];
+  postId: string;
 }
 
 // TODO: Get a list of comments
-export default function CommentShow({
+export default async function CommentShow({
   commentId,
-  comments,
+  postId,
 }: CommentShowProps) {
+  const comments = await fetchCommentsByPostId(postId);
   const comment = comments.find((c) => c.id === commentId);
 
   if (!comment) {
@@ -34,7 +35,7 @@ export default function CommentShow({
       <CommentShow
         key={child.id}
         commentId={child.id}
-        comments={comments}
+        postId={postId}
       />
     );
   });
