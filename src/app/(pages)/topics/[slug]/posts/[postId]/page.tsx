@@ -5,6 +5,7 @@ import CommentCreateForm from "@/components/comments/comment-create-form";
 import { paths } from "@/helpers/paths";
 import { fetchCommentsByPostId } from "@/db/queries/comments";
 import { Suspense } from "react";
+import PostShowSkeleton from "@/components/posts/post-show-skeleton";
 
 interface PostShowPageProps {
   params: {
@@ -26,16 +27,7 @@ export default async function PostShowPage({
       >
         {"< "}Back to {slug}
       </Link>
-      <Suspense
-        fallback={
-          <div className='m-4 animate-pulse'>
-            <h1 className='text-2xl font-bold my-2 '>
-              Loading...
-            </h1>
-            <p className='h-[57.6px] bg-gray-200 rounded dark:bg-gray-700 mb-2.5'></p>
-          </div>
-        }
-      >
+      <Suspense fallback={<PostShowSkeleton />}>
         <PostShow postId={postId} />
       </Suspense>
 
