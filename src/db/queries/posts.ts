@@ -25,10 +25,10 @@ export function fetchPostByTopicSlug(
     },
   });
 }
-export async function fetchPostById(
+export function fetchPostById(
   postId: string
-): Promise<PostWithData | null> {
-  const response = await db.post.findFirst({
+): PrismaPromise<PostWithData | null> {
+  return db.post.findFirst({
     where: {
       id: postId,
     },
@@ -38,6 +38,23 @@ export async function fetchPostById(
       _count: { select: { comments: true } },
     },
   });
+}
 
-  return response;
+export function fetchTopPostsByComments(): PrismaPromise<
+  PostWithData[]
+> {
+  return db.post.findMany({
+    orderBy: [
+      {
+        comments: {
+          _count: "desc",
+        },
+      },
+    ],
+    include: {
+      topic: { select: { slug: true } },
+      user: { select: { name: true, image: true } },
+      _count: { select: { comments: true } },
+    },
+  });
 }
