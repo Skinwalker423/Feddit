@@ -8,6 +8,7 @@ interface PostShowProps {
 export default async function PostShow({
   postId,
 }: PostShowProps) {
+  await new Promise((resolve) => setTimeout(resolve, 5000));
   const post = await fetchPostById(postId);
 
   if (!post) return notFound();
