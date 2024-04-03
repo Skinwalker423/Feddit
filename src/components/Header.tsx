@@ -21,7 +21,9 @@ const Header = () => {
       </NavbarBrand>
       <NavbarContent justify='center'>
         <NavbarItem>
-          <SearchInput />
+          <Suspense>
+            <SearchInput />
+          </Suspense>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify='end'>
